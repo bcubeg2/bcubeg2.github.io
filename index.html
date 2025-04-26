@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Web App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .chat-box {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    .messages {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .message {
+      padding: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+    .input-area {
+      display: flex;
+      justify-content: space-between;
+    }
+    input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 15%;
+      padding: 10px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-box">
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <input type="text" id="messageInput" placeholder="Type a message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const messagesDiv = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+
+    function sendMessage() {
+      const message = messageInput.value;
+      if (message.trim() === '') return;
+
+      // Add the message to the chat box
+      const newMessage = document.createElement('div');
+      newMessage.classList.add('message');
+      newMessage.textContent = message;
+      messagesDiv.appendChild(newMessage);
+
+      // Clear the input field
+      messageInput.value = '';
+
+      // Simulate receiving a message (from Telegram API or server)
+      setTimeout(() => {
+        const replyMessage = document.createElement('div');
+        replyMessage.classList.add('message');
+        replyMessage.textContent = 'This is a simulated reply';
+        messagesDiv.appendChild(replyMessage);
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
