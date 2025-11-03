@@ -1,5 +1,5 @@
-// Configuration
-const OLLAMA_BASE_URL = "http://localhost:11434";
+// Configuration (editable at runtime via UI; persisted in localStorage)
+let OLLAMA_BASE_URL = loadBaseUrl();
 
 // DOM Elements
 const messagesDiv = document.getElementById("messages");
@@ -15,6 +15,10 @@ let conversationHistory = [];
 
 // Initialize
 document.addEventListener("DOMContentLoaded", function () {
+  // Set the base URL input from stored value
+  const baseUrlInput = document.getElementById("baseUrlInput");
+  if (baseUrlInput) baseUrlInput.value = OLLAMA_BASE_URL;
+
   checkOllamaConnection();
   refreshModels();
 
@@ -31,6 +35,8 @@ async function checkOllamaConnection() {
     const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`);
     if (response.ok) {
       statusIndicator.className = "status-indicator status-connected";
+      updateServerStatusText("Connected", "connected");
+      toggleConnectionHelp(false);
       return true;
     }
   } catch (error) {
@@ -38,9 +44,11 @@ async function checkOllamaConnection() {
   }
 
   statusIndicator.className = "status-indicator status-disconnected";
-  showError(
-    "Cannot connect to Ollama. Make sure Ollama is running on localhost:11434"
+  updateServerStatusText(
+    `Disconnected from ${OLLAMA_BASE_URL}. Check that Ollama is running and CORS is allowed.`,
+    "disconnected"
   );
+  toggleConnectionHelp(true);
   return false;
 }
 
@@ -85,7 +93,48 @@ async function refreshModels() {
   } catch (error) {
     console.error("Failed to refresh models:", error);
     statusIndicator.className = "status-indicator status-disconnected";
+    updateServerStatusText("Failed to load models", "disconnected");
   }
+}
+
+// Apply new base URL from input and re-check connection/models
+function applyBaseUrl() {
+  const input = document.getElementById("baseUrlInput");
+  const url = (input?.value || "").trim().replace(/\/$/, "");
+  if (!url) return;
+  OLLAMA_BASE_URL = url;
+  try {
+    localStorage.setItem("ollama.baseUrl", OLLAMA_BASE_URL);
+  } catch {}
+  updateServerStatusText(`Using ${OLLAMA_BASE_URL}`, "info");
+  checkOllamaConnection();
+  refreshModels();
+}
+
+// Manually test the connection and show help when it fails
+function testConnection() {
+  updateServerStatusText("Testing...", "info");
+  checkOllamaConnection();
+}
+
+function loadBaseUrl() {
+  try {
+    const stored = localStorage.getItem("ollama.baseUrl");
+    if (stored && /^https?:\/\//i.test(stored))
+      return stored.replace(/\/$/, "");
+  } catch {}
+  return "http://localhost:11434";
+}
+
+function updateServerStatusText(text, state) {
+  const el = document.getElementById("serverStatusText");
+  if (el) el.textContent = text;
+}
+
+function toggleConnectionHelp(show) {
+  const help = document.getElementById("connectionHelp");
+  if (!help) return;
+  help.style.display = show ? "block" : "none";
 }
 
 // Handle Enter key

@@ -33,6 +33,35 @@
           >
             Refresh
           </button>
+          <button
+            id="clearBtn"
+            onclick="clearConversation()"
+            style="
+              padding: 5px 10px;
+              border: none;
+              background: rgba(255, 255, 255, 0.2);
+              color: white;
+              border-radius: 3px;
+              cursor: pointer;
+            "
+          >
+            Clear
+          </button>
+        </div>
+        <div class="server-panel">
+          <div class="server-row">
+            <span class="server-label">Server:</span>
+            <input
+              id="baseUrlInput"
+              type="text"
+              value="http://localhost:11434"
+            />
+            <button class="server-btn" onclick="applyBaseUrl()">Save</button>
+            <button class="server-btn" onclick="testConnection()">Test</button>
+            <span id="serverStatusText" class="server-status-text"
+              >Not checked</span
+            >
+          </div>
         </div>
       </div>
 
@@ -51,6 +80,18 @@
           <span></span>
           <span></span>
         </div>
+      </div>
+      <div id="connectionHelp" class="connection-help" style="display: none">
+        <strong>Trouble connecting?</strong>
+        <p>
+          If the status stays red, restart Ollama with CORS enabled so the site
+          can call it:
+        </p>
+        <pre><code>PowerShell:
+$env:OLLAMA_ORIGINS="http://localhost:8000"; ollama serve
+        </code></pre>
+        <p>You can also allow all origins during local dev:</p>
+        <pre><code>$env:OLLAMA_ORIGINS="*"; ollama serve</code></pre>
       </div>
 
       <div class="input-area">

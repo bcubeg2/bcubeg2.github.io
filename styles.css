@@ -237,3 +237,64 @@ body {
 .status-disconnected {
   background-color: #ff4444;
 }
+
+/* Server panel */
+.server-panel {
+  padding: 10px 16px;
+  background: #f3f7f3;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.server-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.server-label {
+  font-weight: 600;
+  color: #2f4f2f;
+}
+
+#baseUrlInput {
+  min-width: 260px;
+  max-width: 60vw;
+  padding: 6px 10px;
+  border: 1px solid #cfd8cf;
+  border-radius: 6px;
+}
+
+.server-btn {
+  padding: 6px 12px;
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.server-btn:hover {
+  background: #dcedc8;
+}
+
+.server-status-text {
+  color: #333;
+}
+
+.connection-help {
+  margin: 10px 20px 0 20px;
+  padding: 12px 14px;
+  background: #fff7f0;
+  border: 1px solid #ffd8b2;
+  border-radius: 8px;
+  color: #6b4e16;
+}
+
+.connection-help pre {
+  background: #fff1e0;
+  padding: 8px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
