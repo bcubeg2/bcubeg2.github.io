@@ -1,0 +1,16 @@
+# Build artifacts
+_site/
+
+# Java compiled files
+*.class
+*.jar
+*.war
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
