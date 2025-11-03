@@ -267,6 +267,21 @@ body {
   border-radius: 6px;
 }
 
+#apiKeyInput {
+  min-width: 240px;
+  max-width: 50vw;
+  padding: 6px 10px;
+  border: 1px solid #cfd8cf;
+  border-radius: 6px;
+}
+
+#authSchemeSelect {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cfd8cf;
+  background: #fff;
+}
+
 .server-btn {
   padding: 6px 12px;
   background: #e8f5e9;

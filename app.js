@@ -1,5 +1,7 @@
 // Configuration (editable at runtime via UI; persisted in localStorage)
 let OLLAMA_BASE_URL = loadBaseUrl();
+let API_KEY = loadApiKey();
+let AUTH_SCHEME = loadAuthScheme(); // 'bearer' or 'x-api-key'
 
 // DOM Elements
 const messagesDiv = document.getElementById("messages");
@@ -18,6 +20,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // Set the base URL input from stored value
   const baseUrlInput = document.getElementById("baseUrlInput");
   if (baseUrlInput) baseUrlInput.value = OLLAMA_BASE_URL;
+  const apiKeyInput = document.getElementById("apiKeyInput");
+  if (apiKeyInput) apiKeyInput.value = API_KEY || "";
+  const authSchemeSelect = document.getElementById("authSchemeSelect");
+  if (authSchemeSelect) authSchemeSelect.value = AUTH_SCHEME || "bearer";
 
   checkOllamaConnection();
   refreshModels();
@@ -29,10 +35,66 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+// ---- Auth & settings helpers ----
+function loadApiKey() {
+  try {
+    return localStorage.getItem("ollama.apiKey") || "";
+  } catch {
+    return "";
+  }
+}
+
+function loadAuthScheme() {
+  try {
+    const s = localStorage.getItem("ollama.authScheme");
+    return s === "x-api-key" ? "x-api-key" : "bearer";
+  } catch {
+    return "bearer";
+  }
+}
+
+function getAuthHeaders() {
+  const headers = {};
+  if (API_KEY) {
+    if (AUTH_SCHEME === "x-api-key") headers["X-API-Key"] = API_KEY;
+    else headers["Authorization"] = `Bearer ${API_KEY}`;
+  }
+  return headers;
+}
+
+function applyApiSettings() {
+  const apiKeyInput = document.getElementById("apiKeyInput");
+  const authSchemeSelect = document.getElementById("authSchemeSelect");
+  API_KEY = (apiKeyInput?.value || "").trim();
+  AUTH_SCHEME =
+    authSchemeSelect?.value === "x-api-key" ? "x-api-key" : "bearer";
+  try {
+    if (API_KEY) localStorage.setItem("ollama.apiKey", API_KEY);
+    else localStorage.removeItem("ollama.apiKey");
+    localStorage.setItem("ollama.authScheme", AUTH_SCHEME);
+  } catch {}
+  updateServerStatusText("API settings saved", "info");
+  // Re-test connection to reflect header changes
+  checkOllamaConnection();
+}
+
+function clearApiKey() {
+  API_KEY = "";
+  try {
+    localStorage.removeItem("ollama.apiKey");
+  } catch {}
+  const apiKeyInput = document.getElementById("apiKeyInput");
+  if (apiKeyInput) apiKeyInput.value = "";
+  updateServerStatusText("API key cleared", "info");
+  checkOllamaConnection();
+}
+
 // Check if Ollama is running
 async function checkOllamaConnection() {
   try {
-    const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`);
+    const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`, {
+      headers: getAuthHeaders(),
+    });
     if (response.ok) {
       statusIndicator.className = "status-indicator status-connected";
       updateServerStatusText("Connected", "connected");
@@ -55,7 +117,9 @@ async function checkOllamaConnection() {
 // Refresh available models
 async function refreshModels() {
   try {
-    const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`);
+    const response = await fetch(`${OLLAMA_BASE_URL}/api/tags`, {
+      headers: getAuthHeaders(),
+    });
     if (response.ok) {
       const data = await response.json();
       const models = data.models || [];
@@ -170,9 +234,7 @@ async function sendMessage() {
     // Send to Ollama
     const response = await fetch(`${OLLAMA_BASE_URL}/api/chat`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
       body: JSON.stringify({
         model: modelSelect.value,
         messages: conversationHistory,

@@ -62,6 +62,22 @@
               >Not checked</span
             >
           </div>
+          <div class="server-row">
+            <span class="server-label">API Key:</span>
+            <input
+              id="apiKeyInput"
+              type="password"
+              placeholder="Optional key (stored locally)"
+            />
+            <select id="authSchemeSelect">
+              <option value="bearer">Authorization: Bearer &lt;key&gt;</option>
+              <option value="x-api-key">X-API-Key: &lt;key&gt;</option>
+            </select>
+            <button class="server-btn" onclick="applyApiSettings()">
+              Save Key
+            </button>
+            <button class="server-btn" onclick="clearApiKey()">Clear</button>
+          </div>
         </div>
       </div>
 
