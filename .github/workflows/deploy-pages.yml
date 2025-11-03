@@ -33,8 +33,8 @@ jobs:
           cp index.html _site/
           cp app.js _site/
           cp styles.css _site/
-          cp -r OLLAMA_SETUP.md _site/ 2>/dev/null || true
-          cp -r README.md _site/ 2>/dev/null || true
+          cp OLLAMA_SETUP.md _site/ 2>/dev/null || true
+          cp README.md _site/ 2>/dev/null || true
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
